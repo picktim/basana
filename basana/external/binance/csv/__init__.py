@@ -17,5 +17,5 @@
 # flake8: noqa
 
 from .bars import (
-    BarSource,
+    BarSource, BinanceBarSource
 )

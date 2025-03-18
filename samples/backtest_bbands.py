@@ -22,6 +22,7 @@ from decimal import Decimal
 import asyncio
 import datetime
 import logging
+import os 
 
 from basana.backtesting import charts, lending
 from basana.core.logs import StructuredMessage
@@ -34,6 +35,12 @@ from samples.strategies import bbands
 
 
 async def main():
+# '/Users/nguyenquycuong/Documents/PythonPrjs/RangeFilter/futures/um/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2023-01.csv'
+    dir_path = os.path.dirname(os.path.realpath('.'))
+    dir_path += '/PythonPrjs/RangeFilter/futures/um/monthly/klines/BTCUSDT/1m'
+    file_bt = 'BTCUSDT-1m-2023-01.csv'
+    dir_path += '/' + file_bt
+
     logging.basicConfig(level=logging.INFO, format="[%(asctime)s %(levelname)s] %(message)s")
 
     event_dispatcher = bs.backtesting_dispatcher()
@@ -54,7 +61,7 @@ async def main():
     )
     exchange.set_symbol_precision(pair.base_symbol, 8)
     exchange.set_symbol_precision(pair.quote_symbol, 2)
-    exchange.add_bar_source(csv.BarSource(pair, "binance_btcusdt_day.csv", "1d"))
+    exchange.add_bar_source(csv.BinanceBarSource(pair, dir_path, "1m"))
 
     # Connect the strategy to the bar events from the exchange.
     strategy = bbands.Strategy(event_dispatcher, period=30, std_dev=2)

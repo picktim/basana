@@ -19,6 +19,7 @@ import datetime
 from basana.core import pair
 from basana.core.event_sources import csv
 from basana.external.binance.tools.download_bars import period_to_step
+from basana.external.common.csv.BinanceRowParser import BinanceRowParser
 from basana.external.common.csv.bars import RowParser
 
 
@@ -39,4 +40,17 @@ class BarSource(csv.EventSource):
         timedelta = period_to_timedelta.get(period)
         assert timedelta is not None, "Invalid period"
         self.row_parser = RowParser(pair, tzinfo=tzinfo, timedelta=timedelta)
+        super().__init__(csv_path, self.row_parser, sort=sort, dict_reader_kwargs=dict_reader_kwargs)
+
+class BinanceBarSource(csv.EventSource):
+    def __init__(
+            self, pair: pair.Pair, csv_path: str, period: str,
+            sort: bool = False, tzinfo: datetime.tzinfo = datetime.timezone.utc,
+            dict_reader_kwargs: dict = {}
+    ):
+        # The datetime in the files are the beginning of the period but we need to generate the event at the period's
+        # end.
+        timedelta = period_to_timedelta.get(period)
+        assert timedelta is not None, "Invalid period"
+        self.row_parser = BinanceRowParser(pair, tzinfo=tzinfo, timedelta=timedelta)
         super().__init__(csv_path, self.row_parser, sort=sort, dict_reader_kwargs=dict_reader_kwargs)

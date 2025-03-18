@@ -44,7 +44,9 @@ class Bar:
 
     def __init__(
             self, datetime: datetime.datetime, pair: pair.Pair,
-            open: Decimal, high: Decimal, low: Decimal, close: Decimal, volume: Decimal
+            open: Decimal, high: Decimal, low: Decimal, 
+            close: Decimal, volume: Decimal
+    
     ):
         if high < low:
             raise InvalidBar(f"high < low on {datetime}")
